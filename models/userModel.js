@@ -12,7 +12,6 @@ var userSchema = new mongoose.Schema(
     lastname: {
       type: String,
       required: true,
-      unique: false,
     },
     email: {
       type: String,
@@ -42,6 +41,7 @@ var userSchema = new mongoose.Schema(
     },
     address: [{ type: mongoose.Schema.Types.ObjectId, ref: "Address" }],
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    compare: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     refreshToken: {
       type: String,
     },

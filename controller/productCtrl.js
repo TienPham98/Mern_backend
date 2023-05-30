@@ -23,9 +23,13 @@ const updateProduct = asyncHandler(async (req, res) => {
     if (req.body.title) {
       req.body.slug = slugify(req.body.title);
     }
-    const updateProduct = await Product.findOneAndUpdate(id, req.body, {
-      new: true,
-    });
+    const updateProduct = await Product.findOneAndUpdate(
+      { _id: id },
+      req.body,
+      {
+        new: true,
+      }
+    );
     res.json(updateProduct);
   } catch (error) {
     throw new Error(error);
@@ -47,7 +51,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
   }
 });
 
-const getaProduct = asyncHandler(async (req, res) => {
+const getAProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
@@ -106,8 +110,8 @@ const addToWishlist = asyncHandler(async (req, res) => {
   const { prodId } = req.body;
   try {
     const user = await User.findById(_id);
-    const alreadyadded = user.wishlist.find((id) => id.toString() === prodId);
-    if (alreadyadded) {
+    const alreadyAdded = user.wishlist.find((id) => id.toString() === prodId);
+    if (alreadyAdded) {
       let user = await User.findByIdAndUpdate(
         _id,
         {
@@ -135,13 +139,47 @@ const addToWishlist = asyncHandler(async (req, res) => {
   }
 });
 
+const addToCompare = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { prodId } = req.body;
+  try {
+    const user = await User.findById(_id);
+    const alreadyAdded = user.compare.find((id) => id.toString() === prodId);
+    if (alreadyAdded) {
+      let user = await User.findByIdAndUpdate(
+        _id,
+        {
+          $pull: { compare: prodId },
+        },
+        {
+          new: true,
+        }
+      );
+      res.json(user);
+    } else {
+      let user = await User.findByIdAndUpdate(
+        _id,
+        {
+          $push: { compare: prodId },
+        },
+        {
+          new: true,
+        }
+      );
+      res.json(user);
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 const rating = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { star, prodId, comment } = req.body;
   try {
     const product = await Product.findById(prodId);
-    let alreadyRated = product.ratings.find(
-      (userId) => userId.postedby.toString() === _id.toString()
+    let alreadyRated = product?.ratings.find(
+      (userId) => userId.postedBy.toString() === _id.toString()
     );
     if (alreadyRated) {
       const updateRating = await Product.updateOne(
@@ -163,7 +201,7 @@ const rating = asyncHandler(async (req, res) => {
             ratings: {
               star: star,
               comment: comment,
-              postedby: _id,
+              postedBy: _id,
             },
           },
         },
@@ -172,20 +210,20 @@ const rating = asyncHandler(async (req, res) => {
         }
       );
     }
-    const getallratings = await Product.findById(prodId);
-    let totalRating = getallratings.ratings.length;
-    let ratingsum = getallratings.ratings
+    const getAllRatings = await Product.findById(prodId);
+    let totalRating = getAllRatings.ratings.length;
+    let ratingSum = getAllRatings.ratings
       .map((item) => item.star)
       .reduce((prev, curr) => prev + curr, 0);
-    let actualRating = Math.round(ratingsum / totalRating);
-    let finalproduct = await Product.findByIdAndUpdate(
+    let actualRating = Math.round(ratingSum / totalRating);
+    let finalProduct = await Product.findByIdAndUpdate(
       prodId,
       {
-        totalrating: actualRating,
+        totalRating: actualRating,
       },
       { new: true }
     );
-    res.json(finalproduct);
+    res.json(finalProduct);
   } catch (error) {
     throw new Error(error);
   }
@@ -193,10 +231,11 @@ const rating = asyncHandler(async (req, res) => {
 
 module.exports = {
   createProduct,
-  getaProduct,
+  getAProduct,
   getAllProduct,
   updateProduct,
   deleteProduct,
   addToWishlist,
+  addToCompare,
   rating,
 };
