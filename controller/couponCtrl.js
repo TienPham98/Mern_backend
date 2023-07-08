@@ -1,5 +1,5 @@
 const Coupon = require("../models/couponModel");
-const validateMongoDbId = require("../utils/validateMongodbId");
+const validateMongoDbId = require("../utils/validateMongoDbId");
 const asynHandler = require("express-async-handler");
 
 const createCoupon = asynHandler(async (req, res) => {
@@ -19,7 +19,7 @@ const getAllCoupons = asynHandler(async (req, res) => {
   }
 });
 const updateCoupon = asynHandler(async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   validateMongoDbId(id);
   try {
     const updatecoupon = await Coupon.findByIdAndUpdate(id, req.body, {
@@ -31,7 +31,7 @@ const updateCoupon = asynHandler(async (req, res) => {
   }
 });
 const deleteCoupon = asynHandler(async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   validateMongoDbId(id);
   try {
     const deletecoupon = await Coupon.findByIdAndDelete(id);
@@ -41,7 +41,7 @@ const deleteCoupon = asynHandler(async (req, res) => {
   }
 });
 const getCoupon = asynHandler(async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   validateMongoDbId(id);
   try {
     const getAcoupon = await Coupon.findById(id);

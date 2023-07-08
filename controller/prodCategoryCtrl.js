@@ -1,6 +1,6 @@
 const Category = require("../models/prodCategoryModel.js");
 const asyncHandler = require("express-async-handler");
-const validateMongoDbId = require("../utils/validateMongodbId");
+const validateMongoDbId = require("../utils/validateMongoDbId");
 
 const createCategory = asyncHandler(async (req, res) => {
   try {
@@ -11,7 +11,7 @@ const createCategory = asyncHandler(async (req, res) => {
   }
 });
 const updateCategory = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   validateMongoDbId(id);
   try {
     const updatedCategory = await Category.findByIdAndUpdate(id, req.body, {
@@ -23,7 +23,7 @@ const updateCategory = asyncHandler(async (req, res) => {
   }
 });
 const deleteCategory = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   validateMongoDbId(id);
   try {
     const deletedCategory = await Category.findByIdAndDelete(id);
@@ -33,7 +33,7 @@ const deleteCategory = asyncHandler(async (req, res) => {
   }
 });
 const getCategory = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   validateMongoDbId(id);
   try {
     const getaCategory = await Category.findById(id);
