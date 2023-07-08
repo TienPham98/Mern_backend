@@ -15,7 +15,7 @@ const colorRouter = require("./routes/colorRoute");
 const uploadRouter = require("./routes/uploadRoute");
 const enqRouter = require("./routes/enqRoute");
 
-const { notFound, errorHandler } = require("./middlewares/errorHandler");
+const {notFound, errorHandler} = require("./middlewares/errorHandler");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -27,12 +27,17 @@ app.use(morgan("dev"));
 // cors
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3006"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3006",
+      "https://hoaleauthentic.onrender.com",
+      "https://hoaleauth.onrender.com",
+    ],
     credentials: true,
   })
 );
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
 app.use("/api/user", authRouter);
