@@ -1,5 +1,5 @@
 const mongoose = require("mongoose"); // Erase if already required
-const { number } = require("sharp/lib/is");
+const {number} = require("sharp/lib/is");
 
 // Declare the Schema of the Mongo model
 var orderSchema = new mongoose.Schema(
@@ -56,6 +56,10 @@ var orderSchema = new mongoose.Schema(
         product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
+          required: true,
+        },
+        title: {
+          type: String,
           required: true,
         },
         quantity: {

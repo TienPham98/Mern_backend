@@ -17,19 +17,15 @@ const createProduct = asyncHandler(async (req, res) => {
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   validateMongoDbId(id);
   try {
     if (req.body.title) {
       req.body.slug = slugify(req.body.title);
     }
-    const updateProduct = await Product.findOneAndUpdate(
-      { _id: id },
-      req.body,
-      {
-        new: true,
-      }
-    );
+    const updateProduct = await Product.findOneAndUpdate({_id: id}, req.body, {
+      new: true,
+    });
     res.json(updateProduct);
   } catch (error) {
     throw new Error(error);
@@ -37,10 +33,10 @@ const updateProduct = asyncHandler(async (req, res) => {
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   validateMongoDbId(id);
   try {
-    const deleteProduct = await Product.findOneAndDelete({ _id: id });
+    const deleteProduct = await Product.findOneAndDelete({_id: id});
     if (!deleteProduct) {
       res.status(404);
       throw new Error("Product not found");
@@ -52,7 +48,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 });
 
 const getAProduct = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   validateMongoDbId(id);
   try {
     const findProduct = await Product.findById(id);
@@ -62,12 +58,27 @@ const getAProduct = asyncHandler(async (req, res) => {
   }
 });
 
+// const getProductsByCategory = asyncHandler(async (req, res) => {
+//   const {category} = req.params;
+//   try {
+//     const products = await Product.find({category: category});
+//     res.json(products);
+//   } catch (error) {
+//     throw new Error(error);
+//   }
+// });
+
 const getAllProduct = asyncHandler(async (req, res) => {
   try {
     // filter
-    const queryObj = { ...req.query };
-    const excludeFields = ["page", "sort", "limit", "fields"];
+    const queryObj = {...req.query};
+    const excludeFields = ["page", "sort", "limit", "fields", "category"];
     excludeFields.forEach((el) => delete queryObj[el]);
+
+    if (req.query.category) {
+      queryObj.category = req.query.category;
+    }
+
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     let query = Product.find(JSON.parse(queryStr));
@@ -106,8 +117,8 @@ const getAllProduct = asyncHandler(async (req, res) => {
 });
 
 const addToWishlist = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  const { prodId } = req.body;
+  const {_id} = req.user;
+  const {prodId} = req.body;
   try {
     const user = await User.findById(_id);
     const alreadyAdded = user.wishlist.find((id) => id.toString() === prodId);
@@ -115,7 +126,7 @@ const addToWishlist = asyncHandler(async (req, res) => {
       let user = await User.findByIdAndUpdate(
         _id,
         {
-          $pull: { wishlist: prodId },
+          $pull: {wishlist: prodId},
         },
         {
           new: true,
@@ -126,7 +137,7 @@ const addToWishlist = asyncHandler(async (req, res) => {
       let user = await User.findByIdAndUpdate(
         _id,
         {
-          $push: { wishlist: prodId },
+          $push: {wishlist: prodId},
         },
         {
           new: true,
@@ -140,8 +151,8 @@ const addToWishlist = asyncHandler(async (req, res) => {
 });
 
 const addToCompare = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  const { prodId } = req.body;
+  const {_id} = req.user;
+  const {prodId} = req.body;
   try {
     const user = await User.findById(_id);
     const alreadyAdded = user.compare.find((id) => id.toString() === prodId);
@@ -149,7 +160,7 @@ const addToCompare = asyncHandler(async (req, res) => {
       let user = await User.findByIdAndUpdate(
         _id,
         {
-          $pull: { compare: prodId },
+          $pull: {compare: prodId},
         },
         {
           new: true,
@@ -160,7 +171,7 @@ const addToCompare = asyncHandler(async (req, res) => {
       let user = await User.findByIdAndUpdate(
         _id,
         {
-          $push: { compare: prodId },
+          $push: {compare: prodId},
         },
         {
           new: true,
@@ -174,8 +185,8 @@ const addToCompare = asyncHandler(async (req, res) => {
 });
 
 const rating = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  const { star, prodId, comment } = req.body;
+  const {_id} = req.user;
+  const {star, prodId, comment} = req.body;
   try {
     const product = await Product.findById(prodId);
     let alreadyRated = product?.ratings.find(
@@ -184,10 +195,10 @@ const rating = asyncHandler(async (req, res) => {
     if (alreadyRated) {
       const updateRating = await Product.updateOne(
         {
-          ratings: { $elemMatch: alreadyRated },
+          ratings: {$elemMatch: alreadyRated},
         },
         {
-          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
+          $set: {"ratings.$.star": star, "ratings.$.comment": comment},
         },
         {
           new: true,
@@ -221,7 +232,7 @@ const rating = asyncHandler(async (req, res) => {
       {
         totalRating: actualRating,
       },
-      { new: true }
+      {new: true}
     );
     res.json(finalProduct);
   } catch (error) {

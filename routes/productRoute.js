@@ -10,12 +10,11 @@ const {
   rating,
   uploadImages,
 } = require("../controller/productCtrl");
-const { isAdmin, authMiddleware } = require("../middlewares/authMiddleware");
+const {isAdmin, authMiddleware} = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
 router.post("/", authMiddleware, isAdmin, createProduct);
-
 router.get("/:id", getAProduct);
 router.put("/wishlist", authMiddleware, addToWishlist);
 router.put("/compare", authMiddleware, addToCompare);

@@ -23,6 +23,7 @@ const {
   // applyCoupon,
   // getOrders,
   getAllOrders,
+  getOrderByOrderId,
   getMyOrders,
   // getOrderByUserId,
   // updateOrderStatus,
@@ -30,7 +31,7 @@ const {
   deleteUserCartItem,
   updateQuantityFromCart,
 } = require("../controller/userCtrl");
-const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
+const {authMiddleware, isAdmin} = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
@@ -48,7 +49,12 @@ router.get("/all-users", getallUser);
 // router.get("/get-orders", authMiddleware, getOrders);
 router.get("/getallorders", authMiddleware, isAdmin, getAllOrders);
 router.get("/getmyorders", authMiddleware, getMyOrders);
-// router.post("/getorderbyuser/:id", authMiddleware, isAdmin, getOrderByUserId);
+router.get(
+  "/getorderbyorderid/:id",
+  authMiddleware,
+  isAdmin,
+  getOrderByOrderId
+);
 router.get("/logout", logout);
 router.get("/wishlist", authMiddleware, getWishlist);
 router.get("/compare", authMiddleware, getCompare);
